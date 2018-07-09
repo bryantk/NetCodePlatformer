@@ -149,10 +149,10 @@ public class PlatformGNM : NetworkManager
 
 		Debug.LogWarning("OnStartServer");
 		// REGISTER MESSAGES HERE
-		foreach (var messageId in Enum.GetValues(typeof(NetcodeMsgType)).Cast<short>())
+		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
 		{
-			if (messageId <= MsgType.Highest) continue;
-			NetworkServer.RegisterHandler(messageId, OnServerMessageRecieved);
+			if ((short)messageId <= MsgType.Highest) continue;
+			NetworkServer.RegisterHandler((short)messageId, OnServerMessageRecieved);
 		}
 	}
 
@@ -179,10 +179,10 @@ public class PlatformGNM : NetworkManager
 		Debug.LogWarning("OnStartClient:");
 		IsClient = true;
 		// REGISTER MESSAGES HERE
-		foreach (var messageId in Enum.GetValues(typeof(NetcodeMsgType)).Cast<short>())
+		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
 		{
-			if (messageId <= MsgType.Highest) continue;
-			NetworkServer.RegisterHandler(messageId, OnClientMessageRecieved);
+			if ((short)messageId <= MsgType.Highest) continue;
+			NetworkServer.RegisterHandler((short)messageId, OnClientMessageRecieved);
 		}
 	}
 
