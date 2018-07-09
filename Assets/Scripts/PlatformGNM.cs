@@ -7,20 +7,20 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public class NetcodeMsgType
+public enum NetcodeMsgType
 {
-	public static short Hello = MsgType.Highest + 1; // First contact message
-	public static short SetPos = MsgType.Highest + 2;
-	public static short SpawnPlayer = MsgType.Highest + 3;
-	public static short RemoveId = MsgType.Highest + 4;
-	public static short MoveTo = MsgType.Highest + 5;
-	public static short Emote = MsgType.Highest + 6;
-	public static short PickedUp = MsgType.Highest + 7;
-	public static short SetItemPos = MsgType.Highest + 8;
-	public static short Pause = MsgType.Highest + 9;
-	public static short StartGame = MsgType.Highest + 10;
-	public static short EndGame = MsgType.Highest + 11;
-};
+	Hello = MsgType.Highest + 1, // First contact message
+	SetPos = MsgType.Highest + 2,
+	SpawnPlayer = MsgType.Highest + 3,
+	RemoveId = MsgType.Highest + 4,
+	MoveTo = MsgType.Highest + 5,
+	Emote = MsgType.Highest + 6,
+	PickedUp = MsgType.Highest + 7,
+	SetItemPos = MsgType.Highest + 8,
+	Pause = MsgType.Highest + 9,
+	StartGame = MsgType.Highest + 10,
+	EndGame = MsgType.Highest + 11
+}
 
 
 public class NCMessage : MessageBase

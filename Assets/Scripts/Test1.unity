@@ -223,6 +223,7 @@ GameObject:
   - component: {fileID: 1225948892}
   - component: {fileID: 1225948891}
   - component: {fileID: 1225948890}
+  - component: {fileID: 1225948893}
   m_Layer: 0
   m_Name: ServiceLocater
   m_TagString: Untagged
@@ -336,6 +337,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1225948893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1225948889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 227461547, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 0}
+  showGUI: 1
+  offsetX: 0
+  offsetY: 0
 --- !u!1 &2021392076
 GameObject:
   m_ObjectHideFlags: 0
