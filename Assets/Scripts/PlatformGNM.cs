@@ -9,17 +9,7 @@ using UnityEngine.Networking;
 
 public enum NetcodeMsgType
 {
-	Hello = MsgType.Highest + 1, // First contact message
-	SetPos = MsgType.Highest + 2,
-	SpawnPlayer = MsgType.Highest + 3,
-	RemoveId = MsgType.Highest + 4,
-	MoveTo = MsgType.Highest + 5,
-	Emote = MsgType.Highest + 6,
-	PickedUp = MsgType.Highest + 7,
-	SetItemPos = MsgType.Highest + 8,
-	Pause = MsgType.Highest + 9,
-	StartGame = MsgType.Highest + 10,
-	EndGame = MsgType.Highest + 11
+	ChatMessage = MsgType.Highest + 1, // First contact message
 }
 
 
@@ -61,7 +51,7 @@ public class PlatformGNM : NetworkManager
 		};
 		if (IsServer)
 		{
-			Debug.Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
+			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
 			if (targetConn == -1)
 				NetworkServer.SendToAll(type, message);
 			else
@@ -69,7 +59,7 @@ public class PlatformGNM : NetworkManager
 		}
 		else
 		{
-			Debug.Log("CLient sending server message");
+			Log("CLient sending server message");
 			message.SourceClient = _myConnectionId;
 			client.Send(type, message);
 		}
@@ -87,7 +77,7 @@ public class PlatformGNM : NetworkManager
 		};
 		if (IsServer)
 		{
-			Debug.Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
+			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
 			if (targetConn == -1)
 				NetworkServer.SendUnreliableToAll(type, message);
 			else
@@ -95,7 +85,7 @@ public class PlatformGNM : NetworkManager
 		}
 		else
 		{
-			Debug.Log("CLient sending server message");
+			Log("Client sending server message");
 			message.SourceClient = _myConnectionId;
 			client.SendUnreliable(type, message);
 		}
@@ -112,17 +102,26 @@ public class PlatformGNM : NetworkManager
 		// Don't double do things from yourself
 		if (msg.SourceClient == _myConnectionId) return;
 
-		Debug.LogWarning("Got message from " + msg.SourceClient + " - " + msg.Message);
+		LogWarning("Got message from " + msg.SourceClient + " - " + msg.Message);
 		// DO STUFF WITH THE MESSAGE
 		// TODO - giant case statement here
+		switch (netMsg.msgType)
+		{
+			case (short)NetcodeMsgType.ChatMessage:
+				var message = string.Format("Player {0}: {1}", netMsg.conn.connectionId, msg.Message);
+				// TODO - route this to the chat messenger
+				Debug.Log(message);
+				break;
+
+		}
+		
+		
 	}
 
 	public void OnServerMessageRecieved(NetworkMessage netMsg)
 	{
 		NCMessage msg = netMsg.ReadMessage<NCMessage>();
-		Debug.LogWarning("SENT Server message: " + msg.Message + "  from client " + netMsg.conn.connectionId);
-		// Server rebroadcast message to all clients
-		Debug.Log(msg.SourceClient);
+		LogWarning("SENT Server message: " + msg.Message + "  from client " + netMsg.conn.connectionId);
 		// Propagate it to clients
 		if (msg.Reliable)
 		{
@@ -147,7 +146,7 @@ public class PlatformGNM : NetworkManager
 		_TrackedObjects = new Dictionary<int, NCGameObject>();
 		// TODO - track stuff authoritivly 
 
-		Debug.LogWarning("OnStartServer");
+		LogWarning("OnStartServer");
 		// REGISTER MESSAGES HERE
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
 		{
@@ -166,7 +165,7 @@ public class PlatformGNM : NetworkManager
 	public override void OnServerConnect(NetworkConnection conn)
 	{
 		base.OnServerConnect(conn);
-		Debug.LogWarning("OnServerConnect " + conn.connectionId);
+		LogWarning("OnServerConnect " + conn.connectionId);
 
 		// TODO - tell server/players you exist
 		// TODO - get world state
@@ -176,7 +175,7 @@ public class PlatformGNM : NetworkManager
 	{
 		base.OnStartClient(c);
 		//_myConnectionId = client.connection.connectionId;
-		Debug.LogWarning("OnStartClient:");
+		LogWarning("OnStartClient:");
 		IsClient = true;
 		// REGISTER MESSAGES HERE
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
@@ -189,14 +188,14 @@ public class PlatformGNM : NetworkManager
 	public override void OnClientConnect(NetworkConnection conn)
 	{
 		base.OnClientConnect(conn);
-		Debug.LogWarning("OnClientConnect: " + conn.connectionId);
+		LogWarning("OnClientConnect: " + conn.connectionId);
 	}
 
 	public override void OnServerDisconnect(NetworkConnection conn)
 	{
 		base.OnServerConnect(conn);
 		var playerId = conn.connectionId;
-		Debug.LogWarning("OnServerDisconnect " + playerId);
+		LogWarning("OnServerDisconnect " + playerId);
 		// Player left
 	}
 
@@ -204,7 +203,11 @@ public class PlatformGNM : NetworkManager
 	{
 		// Called on each client when server disconnects
 		base.OnClientDisconnect(conn);
-		Debug.LogWarning("OnClientDisconnect: " + conn.connectionId);
+		LogWarning("OnClientDisconnect: " + conn.connectionId);
+		if (conn.lastError != NetworkError.Ok)
+		{
+			Debug.LogError("ClientDisconnected due to error: " + conn.lastError);
+		}
 		Cleanup();
 	}
 
@@ -212,7 +215,7 @@ public class PlatformGNM : NetworkManager
 	{
 		// This hook is called when a client is stopped.
 		// needed?
-		Debug.LogWarning("OnStopClient");
+		LogWarning("OnStopClient");
 		base.OnStopClient();
 		Cleanup();
 	}
@@ -221,10 +224,20 @@ public class PlatformGNM : NetworkManager
 	{
 		// When we kill everything 
 		IsClient = false;
+		StopClient();
 		_myConnectionId = -2;
 		_TrackedObjects.Clear();
 	}
 
+
+	private void Log(string message)
+	{
+		Debug.LogFormat("{0} {1}: {2}", DateTime.UtcNow, Time.time, message);
+	}
+	private void LogWarning(string message)
+	{
+		Debug.LogWarningFormat("{0} {1}: {2}", DateTime.UtcNow, Time.time, message);
+	}
 
 	void OnGUI()
 	{
