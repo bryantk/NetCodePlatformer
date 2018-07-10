@@ -6,7 +6,8 @@ using UnityEngine.Networking;
 public class Servicer : MonoBehaviour
 {
 
-	public NetworkManager Netcode;
+	public PlatformGNM Netcode;
+	public TrackedPool TrackedObjects;
 
 	private static Servicer _instance;
 	public static Servicer Instance

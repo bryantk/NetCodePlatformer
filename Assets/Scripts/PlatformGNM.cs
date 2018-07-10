@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 public enum NetcodeMsgType
 {
 	ChatMessage = MsgType.Highest + 1, // First contact message
+	BatchedPositionUpdate = MsgType.Highest + 2,
 }
 
 
@@ -28,6 +29,8 @@ public class PlatformGNM : NetworkManager
 
 	public bool IsServer { get; private set; }
 	public bool IsClient { get; private set; }
+
+	public bool IsRunning { get { return IsServer || IsClient; } }
 
 	// Probably needed
 	private Dictionary<int, NCGameObject> _TrackedObjects = new Dictionary<int, NCGameObject>();
@@ -112,6 +115,9 @@ public class PlatformGNM : NetworkManager
 				// TODO - route this to the chat messenger
 				Debug.Log(message);
 				break;
+			case (short)NetcodeMsgType.BatchedPositionUpdate:
+				Servicer.Instance.TrackedObjects.SetPositions(msg.Message);
+				break;
 
 		}
 		
@@ -142,17 +148,18 @@ public class PlatformGNM : NetworkManager
 		var addr = ipEntry.AddressList;
 		ServerIP = addr[addr.Length - 1].ToString();
 
-		IsServer = true;
+		
 		_TrackedObjects = new Dictionary<int, NCGameObject>();
 		// TODO - track stuff authoritivly 
-
 		LogWarning("OnStartServer");
 		// REGISTER MESSAGES HERE
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
 		{
 			if ((short)messageId <= MsgType.Highest) continue;
+			Debug.Log("Resister Server: " + (short)messageId);
 			NetworkServer.RegisterHandler((short)messageId, OnServerMessageRecieved);
 		}
+		IsServer = true;
 	}
 
 	public override void OnStopServer()
@@ -174,21 +181,22 @@ public class PlatformGNM : NetworkManager
 	public override void OnStartClient(NetworkClient c)
 	{
 		base.OnStartClient(c);
-		//_myConnectionId = client.connection.connectionId;
 		LogWarning("OnStartClient:");
-		IsClient = true;
-		// REGISTER MESSAGES HERE
-		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
-		{
-			if ((short)messageId <= MsgType.Highest) continue;
-			NetworkServer.RegisterHandler((short)messageId, OnClientMessageRecieved);
-		}
 	}
 
 	public override void OnClientConnect(NetworkConnection conn)
 	{
 		base.OnClientConnect(conn);
 		LogWarning("OnClientConnect: " + conn.connectionId);
+		// REGISTER MESSAGES HERE
+		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
+		{
+			if ((short)messageId <= MsgType.Highest) continue;
+			Debug.Log("Resister Client: " + (short)messageId);
+			client.RegisterHandler((short)messageId, OnClientMessageRecieved);
+		}
+		_myConnectionId = client.connection.connectionId;
+		IsClient = true;
 	}
 
 	public override void OnServerDisconnect(NetworkConnection conn)
@@ -208,6 +216,7 @@ public class PlatformGNM : NetworkManager
 		{
 			Debug.LogError("ClientDisconnected due to error: " + conn.lastError);
 		}
+		
 		Cleanup();
 	}
 
@@ -224,7 +233,7 @@ public class PlatformGNM : NetworkManager
 	{
 		// When we kill everything 
 		IsClient = false;
-		StopClient();
+		NetworkServer.ClearHandlers();
 		_myConnectionId = -2;
 		_TrackedObjects.Clear();
 	}
@@ -232,11 +241,11 @@ public class PlatformGNM : NetworkManager
 
 	private void Log(string message)
 	{
-		Debug.LogFormat("{0} {1}: {2}", DateTime.UtcNow, Time.time, message);
+		Debug.LogFormat("{0} - frame {1}: {2}", DateTime.UtcNow, Time.frameCount, message);
 	}
 	private void LogWarning(string message)
 	{
-		Debug.LogWarningFormat("{0} {1}: {2}", DateTime.UtcNow, Time.time, message);
+		Debug.LogWarningFormat("{0} - frame {1}: {2}", DateTime.UtcNow, Time.frameCount, message);
 	}
 
 	void OnGUI()
