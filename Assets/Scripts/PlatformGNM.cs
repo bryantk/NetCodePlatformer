@@ -60,7 +60,12 @@ public class PlatformGNM : NetworkManager
 		if (IsServer)
 		{
 			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
-			if (targetConn == -1)
+			if (targetConn == sourceConnection)
+			{
+				// Handle immediately - Is host client talking to host server
+				OnClientMessageRecieved(message, type);
+			}
+			else if (targetConn == -1)
 				NetworkServer.SendToAll(type, message);
 			else
 				NetworkServer.SendToClient(targetConn, type, message);
@@ -86,8 +91,11 @@ public class PlatformGNM : NetworkManager
 		if (IsServer)
 		{
 			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
-			if (targetConn == 0)
-				return;
+			if (targetConn == sourceConnection)
+			{
+				// Handle immediately - Is host client talking to host server
+				OnClientMessageRecieved(message, type);
+			}
 			else if (targetConn == -1)
 				NetworkServer.SendUnreliableToAll(type, message);
 			else
@@ -107,28 +115,32 @@ public class PlatformGNM : NetworkManager
 	/// <param name="netMsg"></param>
 	public void OnClientMessageRecieved(NetworkMessage netMsg)
 	{
-		NCMessage msg = netMsg.ReadMessage<NCMessage>();
+		//NCMessage msg = netMsg.ReadMessage<NCMessage>();
 
+		OnClientMessageRecieved(netMsg.ReadMessage<NCMessage>(), netMsg.msgType);	
+	}
+
+	public void OnClientMessageRecieved(NCMessage msg, short msgType)
+	{
 		// Don't double do things from yourself
 		if (msg.SourceClient == _myConnectionId) return;
 
 		LogWarning("Got message from " + msg.SourceClient + " - " + msg.Message);
 		// DO STUFF WITH THE MESSAGE
 		// TODO - giant case statement here
-		switch (netMsg.msgType)
+		switch (msgType)
 		{
 			case (short)NetcodeMsgType.ChatMessage:
-                Servicer.Instance.ChatManager.ChatMessageReceived(msg.Message, msg.SourceClient);
+				Servicer.Instance.ChatManager.ChatMessageReceived(msg.Message, msg.SourceClient);
 				break;
 			case (short)NetcodeMsgType.BatchedPositionUpdate:
 				Servicer.Instance.TrackedObjects.SetPositions(msg.Message);
 				break;
 			case (short)NetcodeMsgType.PositionUpdateRequest:
-				
+				Servicer.Instance.TrackedObjects.ProcessPositionRequestBatch(msg.Message);
 				break;
 		}
-		
-		
+
 	}
 
 	public void OnServerMessageRecieved(NetworkMessage netMsg)
