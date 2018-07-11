@@ -1,44 +1,64 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class BatchedPositionData
 {
-	public List<Vector3> Positions;
+	public List<PriorityValue<Vector3>> Positions;
 
+}
+
+[Serializable]
+public struct PriorityValue<T>
+{
+	public int Priority;
+	public T Value;
+
+	public PriorityValue(int priority, T value)
+	{
+		Priority = priority;
+		Value = value;
+	}
 }
 
 public class TrackedPool : MonoBehaviour {
 
-	private Dictionary<int, GameObject> _PositionTrackedObjects = new Dictionary<int, GameObject>();
+	public Dictionary<int, GameObject> PositionTrackedObjects = new Dictionary<int, GameObject>();
 
-	public List<GameObject> Tracked;
+	public Dictionary<int, PriorityValue<Vector3>> PositionBatch = new Dictionary<int, PriorityValue<Vector3>>();
 
-
-	void Update()
+	void LateUpdate()
 	{
-		if (!Servicer.Instance.Netcode.IsServer) return;
+		if (PositionBatch.Count == 0) return;
 
-		var toSend = new BatchedPositionData { Positions = Tracked.Select(x => x.transform.position).ToList() };
-		SetPositions(JsonUtility.ToJson(toSend), true);
+		var toSend = new BatchedPositionData { Positions = PositionBatch.Values.ToList() };
+		Servicer.Instance.Netcode.SendDataUnreliable(
+				(short)NetcodeMsgType.PositionUpdateRequest,
+				JsonUtility.ToJson(toSend),
+				targetConn: 0);
 	}
 
 
+	public void AddPositionRequest(int id, int connection, Vector3 position)
+	{
+		if (PositionBatch.ContainsKey(id))
+		{
+			if (connection <= PositionBatch[id].Priority)
+			{
+				PositionBatch[id] = new PriorityValue<Vector3>(connection, position);
+			}
+		}
+		else
+		{
+			PositionBatch[id] = new PriorityValue<Vector3>(connection, position);
+		}
+	}
+
 	public void SetPositions(string message, bool broadcast = false)
 	{
-		var data = JsonUtility.FromJson<BatchedPositionData>(message);
-		for (int i = 0; i < Tracked.Count; i++)
-		{
-			Tracked[i].transform.position = data.Positions[i];
-		}
 
-		if (broadcast)
-		{
-			Servicer.Instance.Netcode.SendData(
-				(short)NetcodeMsgType.BatchedPositionUpdate,
-				message);
-		}
 	}
 
 }

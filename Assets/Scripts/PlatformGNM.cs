@@ -11,6 +11,7 @@ public enum NetcodeMsgType
 {
 	ChatMessage = MsgType.Highest + 1, // First contact message
 	BatchedPositionUpdate = MsgType.Highest + 2,
+	PositionUpdateRequest = MsgType.Highest + 3,
 }
 
 
@@ -81,7 +82,9 @@ public class PlatformGNM : NetworkManager
 		if (IsServer)
 		{
 			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
-			if (targetConn == -1)
+			if (targetConn == 0)
+				return;
+			else if (targetConn == -1)
 				NetworkServer.SendUnreliableToAll(type, message);
 			else
 				NetworkServer.SendToClient(targetConn, type, message);
@@ -118,7 +121,9 @@ public class PlatformGNM : NetworkManager
 			case (short)NetcodeMsgType.BatchedPositionUpdate:
 				Servicer.Instance.TrackedObjects.SetPositions(msg.Message);
 				break;
-
+			case (short)NetcodeMsgType.PositionUpdateRequest:
+				
+				break;
 		}
 		
 		
@@ -186,7 +191,7 @@ public class PlatformGNM : NetworkManager
 
 	public override void OnClientConnect(NetworkConnection conn)
 	{
-		base.OnClientConnect(conn);
+		
 		LogWarning("OnClientConnect: " + conn.connectionId);
 		// REGISTER MESSAGES HERE
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
@@ -195,6 +200,7 @@ public class PlatformGNM : NetworkManager
 			Debug.Log("Resister Client: " + (short)messageId);
 			client.RegisterHandler((short)messageId, OnClientMessageRecieved);
 		}
+		base.OnClientConnect(conn);
 		_myConnectionId = client.connection.connectionId;
 		IsClient = true;
 	}
