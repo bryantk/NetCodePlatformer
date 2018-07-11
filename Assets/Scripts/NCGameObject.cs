@@ -31,7 +31,11 @@ public class NCGameObject : MonoBehaviour {
 
 	void Awake()
 	{
-		ID = GetInstanceID();
+		if (ID == 0)
+		{
+			ID = GetInstanceID();
+		}
+		
 		Servicer.Instance.TrackedObjects.TrackObject(ID, this);
 		_lastPosition = transform.position + Vector3.one;
 

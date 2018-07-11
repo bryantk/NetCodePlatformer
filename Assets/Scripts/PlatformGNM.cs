@@ -26,10 +26,10 @@ public class NCMessage : MessageBase
 
 public class PlatformGNM : NetworkManager
 {
-    public int ConnectionID
-    {
-        get { return _myConnectionId; }
-    }
+	public int ConnectionID
+	{
+		get { return _myConnectionId; }
+	}
 	// -2 = none, -1 = all, 0 = server, etc.
 	private int _myConnectionId = -2;
 
@@ -118,7 +118,7 @@ public class PlatformGNM : NetworkManager
 	{
 		//NCMessage msg = netMsg.ReadMessage<NCMessage>();
 
-		OnClientMessageRecieved(netMsg.ReadMessage<NCMessage>(), netMsg.msgType);	
+		OnClientMessageRecieved(netMsg.ReadMessage<NCMessage>(), netMsg.msgType);
 	}
 
 	public void OnClientMessageRecieved(NCMessage msg, short msgType)
@@ -168,7 +168,7 @@ public class PlatformGNM : NetworkManager
 		var addr = ipEntry.AddressList;
 		ServerIP = addr[addr.Length - 1].ToString();
 
-		
+
 		_TrackedObjects = new Dictionary<int, NCGameObject>();
 		// TODO - track stuff authoritivly 
 		LogWarning("OnStartServer");
@@ -194,11 +194,11 @@ public class PlatformGNM : NetworkManager
 		base.OnServerConnect(conn);
 		LogWarning("OnServerConnect " + conn.connectionId);
 
-        // TODO - tell server/players you exist
-        string connectionMessage = "Player " + conn.connectionId + " connected to the server";
-        Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
-        // TODO - get world state
-    }
+		// TODO - tell server/players you exist
+		string connectionMessage = "Player " + conn.connectionId + " connected to the server";
+		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
+		// TODO - get world state
+	}
 
 	public override void OnStartClient(NetworkClient c)
 	{
@@ -226,10 +226,10 @@ public class PlatformGNM : NetworkManager
 		base.OnServerConnect(conn);
 		var playerId = conn.connectionId;
 		LogWarning("OnServerDisconnect " + playerId);
-        string connectionMessage = "Player " + playerId + " disconnected from the server";
-        Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
-        // Player left
-    }
+		string connectionMessage = "Player " + playerId + " disconnected from the server";
+		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
+		// Player left
+	}
 
 	public override void OnClientDisconnect(NetworkConnection conn)
 	{
@@ -240,7 +240,7 @@ public class PlatformGNM : NetworkManager
 		{
 			Debug.LogError("ClientDisconnected due to error: " + conn.lastError);
 		}
-		
+
 		Cleanup();
 	}
 
