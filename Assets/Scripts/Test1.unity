@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 634911642}
   - component: {fileID: 634911641}
   - component: {fileID: 634911640}
+  - component: {fileID: 634911644}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -244,6 +245,20 @@ Transform:
   m_Father: {fileID: 1225948892}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &634911644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 634911639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919f3737aeebddb4d90435783251b9bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  TrackPosition: 1
+  Bob: 0
 --- !u!1 &978136785
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,6 +950,7 @@ GameObject:
   - component: {fileID: 1240167060}
   - component: {fileID: 1240167059}
   - component: {fileID: 1240167058}
+  - component: {fileID: 1240167062}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -1008,6 +1024,20 @@ Transform:
   m_Father: {fileID: 1225948892}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1240167062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1240167057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919f3737aeebddb4d90435783251b9bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  TrackPosition: 1
+  Bob: 2
 --- !u!1 &1257678472
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,6 +1384,7 @@ GameObject:
   - component: {fileID: 1777740065}
   - component: {fileID: 1777740064}
   - component: {fileID: 1777740063}
+  - component: {fileID: 1777740067}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -1427,6 +1458,20 @@ Transform:
   m_Father: {fileID: 1225948892}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1777740067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1777740062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919f3737aeebddb4d90435783251b9bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  TrackPosition: 1
+  Bob: 0
 --- !u!1 &1789770951
 GameObject:
   m_ObjectHideFlags: 0
