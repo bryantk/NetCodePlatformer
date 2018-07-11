@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
+
 public enum NetcodeMsgType
 {
 	ChatMessage = MsgType.Highest + 1, // First contact message
@@ -181,9 +182,11 @@ public class PlatformGNM : NetworkManager
 		base.OnServerConnect(conn);
 		LogWarning("OnServerConnect " + conn.connectionId);
 
-		// TODO - tell server/players you exist
-		// TODO - get world state
-	}
+        // TODO - tell server/players you exist
+        string connectionMessage = "Player " + conn.connectionId + " connected to the server";
+        Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
+        // TODO - get world state
+    }
 
 	public override void OnStartClient(NetworkClient c)
 	{
@@ -193,7 +196,6 @@ public class PlatformGNM : NetworkManager
 
 	public override void OnClientConnect(NetworkConnection conn)
 	{
-		
 		LogWarning("OnClientConnect: " + conn.connectionId);
 		// REGISTER MESSAGES HERE
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
@@ -212,8 +214,10 @@ public class PlatformGNM : NetworkManager
 		base.OnServerConnect(conn);
 		var playerId = conn.connectionId;
 		LogWarning("OnServerDisconnect " + playerId);
-		// Player left
-	}
+        string connectionMessage = "Player " + playerId + " disconnected from the server";
+        Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
+        // Player left
+    }
 
 	public override void OnClientDisconnect(NetworkConnection conn)
 	{
