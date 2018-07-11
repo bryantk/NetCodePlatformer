@@ -21,6 +21,8 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     public void ChatMessageEntered()
     {
+        if (string.IsNullOrEmpty(ChatBox.text))
+            return;
         // Send chat message to server/clients
         ChatMessageReceived(ChatBox.text, Servicer.Instance.Netcode.ConnectionID, true);
         // Reset message text to empty
@@ -33,8 +35,8 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     public void ChatMessageReceived(string message, int senderID, bool broadcast = false)
     {
-        string color = Servicer.Instance.Netcode.ConnectionID == senderID ? "blue" : "red";
-        string playerName = Servicer.Instance.Netcode.ConnectionID == senderID ? "<Self>" : "<Player "+ senderID+ ">";
+        string color = senderID == -1 ? "red" : Servicer.Instance.Netcode.ConnectionID == senderID ? "blue" : "yellow";
+        string playerName = senderID == -1 ? "" : Servicer.Instance.Netcode.ConnectionID == senderID ? "<Self>" : "<Player "+ senderID+ ">";
         string finalMessage = "<color=" + color + ">" + playerName + message + "</color>";
 
         // Set Message in MessageList

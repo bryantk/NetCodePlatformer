@@ -777,8 +777,8 @@ GameObject:
   - component: {fileID: 1225948892}
   - component: {fileID: 1225948891}
   - component: {fileID: 1225948890}
-  - component: {fileID: 1225948893}
   - component: {fileID: 1225948894}
+  - component: {fileID: 1225948893}
   m_Layer: 0
   m_Name: ServiceLocater
   m_TagString: Untagged
@@ -905,11 +905,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1225948889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 227461547, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Script: {fileID: 11500000, guid: ed3e38cd4735dda44b283932eeb290b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
   showGUI: 1
+  hotkeysActive: 0
   offsetX: 0
   offsetY: 0
 --- !u!114 &1225948894
