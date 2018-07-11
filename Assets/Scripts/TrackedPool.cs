@@ -63,6 +63,7 @@ public class TrackedPool : MonoBehaviour
 					Value = entry.Value.Value
 				}).ToList();
 				var data = new BatchedPositionData { Positions = list };
+				Debug.Log("Sent: " + JsonUtility.ToJson(data));
 				SetPositions(JsonUtility.ToJson(data), true);
 			}
 			else
@@ -119,6 +120,7 @@ public class TrackedPool : MonoBehaviour
 	{
 
 		// convert message to list
+		Debug.Log("GOT: " + message);
 		BatchedPositionData data = JsonUtility.FromJson<BatchedPositionData>(message);
 		foreach (var entry in data.Positions)
 		{
@@ -126,12 +128,9 @@ public class TrackedPool : MonoBehaviour
 		}
 		if (broadcast)
 		{
-			var toSend = new BatchedPositionData { Positions = PositionBatch.Values.ToList() };
-			Debug.LogWarning(toSend);
-			Debug.LogWarning(JsonUtility.ToJson(toSend));
 			Servicer.Instance.Netcode.SendDataUnreliable(
 					(short)NetcodeMsgType.BatchedPositionUpdate,
-					JsonUtility.ToJson(toSend));
+					message);
 		}
 		PositionBatch.Clear();
 	}

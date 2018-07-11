@@ -60,14 +60,17 @@ public class PlatformGNM : NetworkManager
 		};
 		if (IsServer)
 		{
-			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
+			
 			if (targetConn == sourceConnection)
 			{
 				// Handle immediately - Is host client talking to host server
 				OnClientMessageRecieved(message, type);
 			}
 			else if (targetConn == -1)
+			{
+				Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
 				NetworkServer.SendToAll(type, message);
+			}
 			else
 				NetworkServer.SendToClient(targetConn, type, message);
 		}
@@ -91,14 +94,17 @@ public class PlatformGNM : NetworkManager
 		};
 		if (IsServer)
 		{
-			Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
+			
 			if (targetConn == sourceConnection)
 			{
 				// Handle immediately - Is host client talking to host server
 				OnClientMessageRecieved(message, type);
 			}
 			else if (targetConn == -1)
+			{
+				Log("Sending server message to all on behalf of " + sourceConnection + ": " + type + " - " + data);
 				NetworkServer.SendUnreliableToAll(type, message);
+			}
 			else
 				NetworkServer.SendToClient(targetConn, type, message);
 		}

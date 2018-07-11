@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 919f3737aeebddb4d90435783251b9bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 2
   TrackPosition: 1
   Bob: 0
 --- !u!1 &978136785
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 919f3737aeebddb4d90435783251b9bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 3
   TrackPosition: 1
   Bob: 2
 --- !u!1 &1257678472
@@ -1469,7 +1469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 919f3737aeebddb4d90435783251b9bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 1
   TrackPosition: 1
   Bob: 0
 --- !u!1 &1789770951
