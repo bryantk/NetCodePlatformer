@@ -24,6 +24,10 @@ public class NCMessage : MessageBase
 
 public class PlatformGNM : NetworkManager
 {
+    public int ConnectionID
+    {
+        get { return _myConnectionId; }
+    }
 	// -2 = none, -1 = all, 0 = server, etc.
 	private int _myConnectionId = -2;
 
@@ -112,6 +116,7 @@ public class PlatformGNM : NetworkManager
 		{
 			case (short)NetcodeMsgType.ChatMessage:
 				var message = string.Format("Player {0}: {1}", netMsg.conn.connectionId, msg.Message);
+                Servicer.Instance.ChatManager.ChatMessageReceived(message, ConnectionID, false);
 				// TODO - route this to the chat messenger
 				Debug.Log(message);
 				break;

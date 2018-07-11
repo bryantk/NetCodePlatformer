@@ -7,6 +7,7 @@ public class Servicer : MonoBehaviour
 {
 
 	public PlatformGNM Netcode;
+    public ChatManager ChatManager;
 	public TrackedPool TrackedObjects;
 
 	private static Servicer _instance;
