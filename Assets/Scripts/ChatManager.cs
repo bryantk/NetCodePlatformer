@@ -21,6 +21,8 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     public void ChatMessageEntered()
     {
+        if (string.IsNullOrEmpty(ChatBox.text))
+            return;
         // Send chat message to server/clients
         ChatMessageReceived(ChatBox.text, Servicer.Instance.Netcode.ConnectionID, true);
         // Reset message text to empty
