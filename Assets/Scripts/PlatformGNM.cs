@@ -118,10 +118,7 @@ public class PlatformGNM : NetworkManager
 		switch (netMsg.msgType)
 		{
 			case (short)NetcodeMsgType.ChatMessage:
-				var message = string.Format("Player {0}: {1}", netMsg.conn.connectionId, msg.Message);
-                Servicer.Instance.ChatManager.ChatMessageReceived(message, ConnectionID, false);
-				// TODO - route this to the chat messenger
-				Debug.Log(message);
+                Servicer.Instance.ChatManager.ChatMessageReceived(msg.Message, msg.SourceClient);
 				break;
 			case (short)NetcodeMsgType.BatchedPositionUpdate:
 				Servicer.Instance.TrackedObjects.SetPositions(msg.Message);

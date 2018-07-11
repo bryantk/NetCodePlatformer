@@ -34,7 +34,7 @@ public class ChatManager : MonoBehaviour
     public void ChatMessageReceived(string message, int senderID, bool broadcast = false)
     {
         string color = Servicer.Instance.Netcode.ConnectionID == senderID ? "blue" : "red";
-        string playerName = Servicer.Instance.Netcode.ConnectionID == senderID ? "<Self>" : "<Other>";
+        string playerName = Servicer.Instance.Netcode.ConnectionID == senderID ? "<Self>" : "<Player "+ senderID+ ">";
         string finalMessage = "<color=" + color + ">" + playerName + message + "</color>";
 
         // Set Message in MessageList
