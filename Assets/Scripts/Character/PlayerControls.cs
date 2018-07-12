@@ -10,6 +10,9 @@ public class PlayerControls : MonoBehaviour
     [SerializeField]
     private Transform playerTrans;
     public float movementSpeed = 30f;
+
+    public GameObject bulletPrefab;
+    private float _nextFireTime = 0;
     // Use this for initialization
     void Start()
     {
@@ -26,5 +29,11 @@ public class PlayerControls : MonoBehaviour
         Vector3 movementDirection = (new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))).normalized;
         playerController.SimpleMove(movementDirection * movementSpeed);// * Time.deltaTime);
         Vector3 fireDirection = (new Vector3(Input.GetAxis("HorizontalFire"), 0, Input.GetAxis("VerticalFire"))).normalized;
+        if (fireDirection.sqrMagnitude > .01f && Time.time > _nextFireTime)
+        {
+            // FIRE!!!
+            Instantiate(bulletPrefab, transform.position + fireDirection, Quaternion.LookRotation(fireDirection, Vector3.up));
+            _nextFireTime = Time.time + .3f;
+        }
     }
 }
