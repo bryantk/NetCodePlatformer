@@ -14,6 +14,7 @@ public enum NetcodeMsgType
 	ChatMessage = MsgType.Highest + 1, // First contact message
 	BatchedPositionUpdate = MsgType.Highest + 2,
 	PositionUpdateRequest = MsgType.Highest + 3,
+	SpawnDummyPlayer = MsgType.Highest + 4,
 }
 
 
@@ -148,6 +149,9 @@ public class PlatformGNM : NetworkManager
 			case (short)NetcodeMsgType.PositionUpdateRequest:
 				Servicer.Instance.TrackedObjects.ProcessPositionRequestBatch(msg.Message);
 				break;
+			case (short)NetcodeMsgType.SpawnDummyPlayer:
+				Servicer.Instance.Spawn.SpawnDummy(msg.Message);
+				break;
 		}
 
 	}
@@ -169,6 +173,7 @@ public class PlatformGNM : NetworkManager
 
 	public override void OnStartServer()
 	{
+		_myConnectionId = 0;
 		base.OnStartServer();
 
 		ServerIP = System.Net.Dns.GetHostName();
@@ -184,11 +189,10 @@ public class PlatformGNM : NetworkManager
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
 		{
 			if ((short)messageId <= MsgType.Highest) continue;
-			Debug.Log("Resister Server: " + (short)messageId);
 			NetworkServer.RegisterHandler((short)messageId, OnServerMessageRecieved);
 		}
 		IsServer = true;
-		_myConnectionId = 0;
+		
 	}
 
 	public override void OnStopServer()
@@ -204,11 +208,12 @@ public class PlatformGNM : NetworkManager
 		base.OnServerConnect(conn);
 		LogWarning("OnServerConnect " + conn.connectionId);
 
-		// TODO - tell server/players you exist
 		string connectionMessage = "Player " + conn.connectionId + " connected to the server";
 		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1, true);
 		// TODO - get world state
 		Servicer.Instance.TrackedObjects.SyncAllDynamicPositions(conn.connectionId);
+		// TODO - tell server/players you exist
+		Servicer.Instance.Spawn.SpawnDummy(conn.connectionId, Vector3.right * conn.connectionId, true);
 	}
 
 	public override void OnStartClient(NetworkClient c)
@@ -224,12 +229,15 @@ public class PlatformGNM : NetworkManager
 		foreach (NetcodeMsgType messageId in Enum.GetValues(typeof(NetcodeMsgType)))
 		{
 			if ((short)messageId <= MsgType.Highest) continue;
-			Debug.Log("Resister Client: " + (short)messageId);
 			client.RegisterHandler((short)messageId, OnClientMessageRecieved);
 		}
 		base.OnClientConnect(conn);
 		_myConnectionId = client.connection.connectionId;
 		IsClient = true;
+
+		// spawn player go
+		Servicer.Instance.Spawn.SpawnPlayer(_myConnectionId, Vector3.zero);
+		// TODO - get list of live players from server.
 	}
 
 	public override void OnServerDisconnect(NetworkConnection conn)

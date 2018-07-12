@@ -36,14 +36,14 @@ public struct PriorityVector
 public class TrackedPool : MonoBehaviour
 {
 
-	public Dictionary<int, GameObject> PositionTrackedObjects = new Dictionary<int, GameObject>();
+	public Dictionary<int, GameObject> PlayerPositionTrackedObjects = new Dictionary<int, GameObject>();
 
 	public Dictionary<int, PriorityVector> PositionBatch = new Dictionary<int, PriorityVector>();
 
 	public bool TrackObject(int id, GameObject Go)
 	{
-		if (PositionTrackedObjects.ContainsKey(id)) return false;
-		PositionTrackedObjects[id] = Go;
+		if (PlayerPositionTrackedObjects.ContainsKey(id)) return false;
+		PlayerPositionTrackedObjects[id] = Go;
 		return true;
 	}
 
@@ -84,7 +84,7 @@ public class TrackedPool : MonoBehaviour
 
 	public void SyncAllDynamicPositions(int targetClient)
 	{
-		var list = PositionTrackedObjects.Select(entry => new PositionRequest()
+		var list = PlayerPositionTrackedObjects.Select(entry => new PositionRequest()
 		{
 			Id = entry.Key,
 			Priority = 0,
@@ -140,7 +140,15 @@ public class TrackedPool : MonoBehaviour
 		{
 			if (entry.Priority == Servicer.Instance.Netcode.ConnectionID) continue;
 
-			PositionTrackedObjects[entry.Id].transform.DOMove(entry.Position, 0.1f);
+			if (PlayerPositionTrackedObjects.ContainsKey(entry.Id))
+			{
+				PlayerPositionTrackedObjects[entry.Id].transform.DOMove(entry.Position, 0.1f);
+			}
+			else
+			{
+				Servicer.Instance.Spawn.SpawnDummy(entry.Id, entry.Position);
+			}
+			
 
 			//PositionTrackedObjects[entry.Id].transform.position = entry.Position;
 		}
