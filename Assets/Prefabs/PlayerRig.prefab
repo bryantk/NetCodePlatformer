@@ -103,14 +103,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1831353334388728}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0.27563733, y: 0, z: 0, w: 0.96126175}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4619012434398588}
   m_Father: {fileID: 4167500319301854}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -32, y: 0, z: 0}
 --- !u!4 &4167500319301854
 Transform:
   m_ObjectHideFlags: 1
@@ -159,13 +159,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1136743177383112}
-  m_LocalRotation: {x: 0.5, y: -0, z: -0, w: 0.8660254}
-  m_LocalPosition: {x: 0, y: 15, z: -9}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 17.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4122325892857812}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!20 &20637347849470508
 Camera:
   m_ObjectHideFlags: 1
@@ -184,7 +184,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -369,6 +369,7 @@ MonoBehaviour:
   playerController: {fileID: 143363827485283596}
   playerTrans: {fileID: 4247915129644688}
   movementSpeed: 30
+  bulletPrefab: {fileID: 0}
 --- !u!114 &114854881353092788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -393,7 +394,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FollowTarget: {fileID: 4247915129644688}
+  CameraRec: {fileID: 20637347849470508}
   FollowSpeed: 0.1
+  dif: 0
 --- !u!124 &124426840252156308
 Behaviour:
   m_ObjectHideFlags: 1

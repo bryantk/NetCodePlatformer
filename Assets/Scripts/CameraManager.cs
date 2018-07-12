@@ -7,8 +7,9 @@ public class CameraManager : MonoBehaviour
 {
 
 	public Transform FollowTarget;
+	public Camera CameraRec;
 	public float FollowSpeed;
-
+	public float dif;
 	// Use this for initialization
 	void Start () {
 		
@@ -19,5 +20,8 @@ public class CameraManager : MonoBehaviour
 	{
 		//transform.DOMove(FollowTarget.position, FollowSpeed).SetSpeedBased(true);
 		transform.position = Vector3.Lerp(transform.position, FollowTarget.position, FollowSpeed);
+
+		dif = (transform.position - FollowTarget.position).magnitude * 6;
+		CameraRec.fieldOfView = 45 + dif;
 	}
 }
