@@ -36,14 +36,14 @@ public struct PriorityVector
 public class TrackedPool : MonoBehaviour
 {
 
-	public Dictionary<int, NCGameObject> PositionTrackedObjects = new Dictionary<int, NCGameObject>();
+	public Dictionary<int, GameObject> PositionTrackedObjects = new Dictionary<int, GameObject>();
 
 	public Dictionary<int, PriorityVector> PositionBatch = new Dictionary<int, PriorityVector>();
 
-	public bool TrackObject(int id, NCGameObject NetGo)
+	public bool TrackObject(int id, GameObject Go)
 	{
 		if (PositionTrackedObjects.ContainsKey(id)) return false;
-		PositionTrackedObjects[id] = NetGo;
+		PositionTrackedObjects[id] = Go;
 		return true;
 	}
 
@@ -88,7 +88,7 @@ public class TrackedPool : MonoBehaviour
 		{
 			Id = entry.Key,
 			Priority = 0,
-			Position = entry.Value.NetPosition
+			Position = entry.Value.transform.position
 		}).ToList();
 		var data = new BatchedPositionRequest { Requests = list };
 

@@ -5,6 +5,9 @@ using DG.Tweening;
 
 public class PlayerControls : MonoBehaviour
 {
+
+	public NCGameObject NcGO;
+
     [SerializeField]
     private CharacterController playerController;
     [SerializeField]
@@ -26,5 +29,7 @@ public class PlayerControls : MonoBehaviour
         Vector3 movementDirection = (new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))).normalized;
         playerController.SimpleMove(movementDirection * movementSpeed);// * Time.deltaTime);
         Vector3 fireDirection = (new Vector3(Input.GetAxis("HorizontalFire"), 0, Input.GetAxis("VerticalFire"))).normalized;
+	    NcGO.NetPosition = transform.position;
+
     }
 }
