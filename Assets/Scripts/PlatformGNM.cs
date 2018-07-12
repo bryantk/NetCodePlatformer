@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Networking;
-
+using UnityEngine.SceneManagement;
 
 
 public enum NetcodeMsgType
@@ -26,12 +27,13 @@ public class NCMessage : MessageBase
 
 public class PlatformGNM : NetworkManager
 {
+	[ShowInInspector]
 	public int ConnectionID
 	{
 		get { return _myConnectionId; }
 	}
 	// -2 = none, -1 = all, 0 = server, etc.
-	private int _myConnectionId = -2;
+	public int _myConnectionId = -2;
 
 	public bool IsServer { get; private set; }
 	public bool IsClient { get; private set; }
@@ -186,6 +188,7 @@ public class PlatformGNM : NetworkManager
 			NetworkServer.RegisterHandler((short)messageId, OnServerMessageRecieved);
 		}
 		IsServer = true;
+		_myConnectionId = 0;
 	}
 
 	public override void OnStopServer()
@@ -193,6 +196,7 @@ public class PlatformGNM : NetworkManager
 		base.OnStopServer();
 		IsServer = false;
 		_TrackedObjects.Clear();
+		ReloadLevel();
 	}
 
 	public override void OnServerConnect(NetworkConnection conn)
@@ -202,8 +206,9 @@ public class PlatformGNM : NetworkManager
 
 		// TODO - tell server/players you exist
 		string connectionMessage = "Player " + conn.connectionId + " connected to the server";
-		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
+		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1, true);
 		// TODO - get world state
+		Servicer.Instance.TrackedObjects.SyncAllDynamicPositions(conn.connectionId);
 	}
 
 	public override void OnStartClient(NetworkClient c)
@@ -233,7 +238,7 @@ public class PlatformGNM : NetworkManager
 		var playerId = conn.connectionId;
 		LogWarning("OnServerDisconnect " + playerId);
 		string connectionMessage = "Player " + playerId + " disconnected from the server";
-		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1);
+		Servicer.Instance.ChatManager.ChatMessageReceived(connectionMessage, -1, true);
 		// Player left
 	}
 
@@ -266,6 +271,13 @@ public class PlatformGNM : NetworkManager
 		NetworkServer.ClearHandlers();
 		_myConnectionId = -2;
 		_TrackedObjects.Clear();
+		ReloadLevel();
+	}
+
+	private void ReloadLevel()
+	{
+		var scene = SceneManager.GetActiveScene();
+		SceneManager.LoadScene(scene.name);
 	}
 
 

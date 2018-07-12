@@ -2,14 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 
-[Serializable]
-public class BatchedPositionData
-{
-	public List<PriorityVector> Positions;
-
-}
 
 [Serializable]
 public class PositionRequest
@@ -45,25 +40,27 @@ public class TrackedPool : MonoBehaviour
 
 	public Dictionary<int, PriorityVector> PositionBatch = new Dictionary<int, PriorityVector>();
 
-	public void TrackObject(int id, NCGameObject NetGo)
+	public bool TrackObject(int id, NCGameObject NetGo)
 	{
+		if (PositionTrackedObjects.ContainsKey(id)) return false;
 		PositionTrackedObjects[id] = NetGo;
+		return true;
 	}
 
-	void LateUpdate()
+	void Update()
 	{
 		// Do we have local position changes to send this frame?
 		if (PositionBatch.Count != 0)
 		{
 			if (Servicer.Instance.Netcode.IsServer)
 			{
-				var list = PositionBatch.Select(entry => new PriorityVector()
+				var list = PositionBatch.Select(entry => new PositionRequest()
 				{
-					Priority = entry.Key,
-					Value = entry.Value.Value
+					Id = entry.Key,
+					Priority = entry.Value.Priority,
+					Position = entry.Value.Value
 				}).ToList();
-				var data = new BatchedPositionData { Positions = list };
-				Debug.Log("Sent: " + JsonUtility.ToJson(data));
+				var data = new BatchedPositionRequest { Requests = list };
 				SetPositions(JsonUtility.ToJson(data), true);
 			}
 			else
@@ -83,12 +80,27 @@ public class TrackedPool : MonoBehaviour
 			}
 
 		}
-
-		//Debug.LogErrorFormat("Updating {0} Positions", PositionBatch.Count);
-		//var toSend = new BatchedPositionData { Positions = PositionBatch.Values.ToList() };
-		//SetPositions(JsonUtility.ToJson(toSend), true);
 	}
 
+	public void SyncAllDynamicPositions(int targetClient)
+	{
+		var list = PositionTrackedObjects.Select(entry => new PositionRequest()
+		{
+			Id = entry.Key,
+			Priority = 0,
+			Position = entry.Value.NetPosition
+		}).ToList();
+		var data = new BatchedPositionRequest { Requests = list };
+
+		Servicer.Instance.Netcode.SendDataUnreliable(
+					(short)NetcodeMsgType.BatchedPositionUpdate,
+					JsonUtility.ToJson(data), targetConn: targetClient);
+	}
+
+	/// <summary>
+	/// Update cached (yet to be sent) position of object
+	/// </summary>
+	/// <param name="message"></param>
 	public void ProcessPositionRequestBatch(string message)
 	{
 		var data = JsonUtility.FromJson<BatchedPositionRequest>(message);
@@ -116,15 +128,21 @@ public class TrackedPool : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Set position of objects in message
+	/// </summary>
+	/// <param name="message"></param>
+	/// <param name="broadcast"></param>
 	public void SetPositions(string message, bool broadcast = false)
 	{
-
-		// convert message to list
-		Debug.Log("GOT: " + message);
-		BatchedPositionData data = JsonUtility.FromJson<BatchedPositionData>(message);
-		foreach (var entry in data.Positions)
+		BatchedPositionRequest data = JsonUtility.FromJson<BatchedPositionRequest>(message);
+		foreach (var entry in data.Requests)
 		{
-			PositionTrackedObjects[entry.Priority].transform.position = entry.Value;
+			if (entry.Priority == Servicer.Instance.Netcode.ConnectionID) continue;
+
+			PositionTrackedObjects[entry.Id].transform.DOMove(entry.Position, 0.1f);
+
+			//PositionTrackedObjects[entry.Id].transform.position = entry.Position;
 		}
 		if (broadcast)
 		{

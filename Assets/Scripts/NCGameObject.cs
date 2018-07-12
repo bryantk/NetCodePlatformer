@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class NCGameObject : MonoBehaviour {
@@ -11,46 +12,48 @@ public class NCGameObject : MonoBehaviour {
 	public bool TrackPosition;
 
 	public float Bob = 0;
+	public int owner = 0;
+
+	[Button]
+	public void FoceNetPosUpdate()
+	{
+		NetPosition = transform.position;
+	}
 
 	public Vector3 NetPosition
 	{
 		get { return transform.position; }
 		set
 		{
-			if (TrackPosition && (_lastPosition - transform.position).magnitude > 0.001f)
+			transform.position = value;
+			if (TrackPosition)
 			{
-				transform.position = value;
-				_lastPosition = transform.position;
-				// Broadcast
 				Servicer.Instance.TrackedObjects.AddPositionRequest(ID, Servicer.Instance.Netcode.ConnectionID, value);
 			}
 		}
 	}
-	private Vector3 _lastPosition;
 
-
-	void Awake()
+	void Start()
 	{
-		if (ID == 0)
+		var added = Servicer.Instance.TrackedObjects.TrackObject(ID, this);
+		if (!added)
 		{
-			ID = GetInstanceID();
+			Debug.LogErrorFormat("Tracked Objects already contains ID '{0}'. '{1}' could not be tracked.", ID, name);
 		}
-		
-		Servicer.Instance.TrackedObjects.TrackObject(ID, this);
-		_lastPosition = transform.position + Vector3.one;
-
-		
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
 		// TODO - Temporary
-		NetPosition = transform.position;
+		if (owner == Servicer.Instance.Netcode.ConnectionID)
+			NetPosition = transform.position;
+
 		if (Bob != 0 && Servicer.Instance.Netcode.IsServer)
 		{
-
-			transform.DOMoveX(Bob, 2).SetLoops(-1, LoopType.Yoyo);
+			var end = transform.position;
+			end.x = Bob;
+			DOTween.To(() => NetPosition, x => NetPosition = x, end, 2).SetLoops(-1, LoopType.Yoyo);
 			Bob = 0;
 		}
 	}
