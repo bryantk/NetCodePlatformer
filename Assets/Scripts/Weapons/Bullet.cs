@@ -22,11 +22,14 @@ public class Bullet : MonoBehaviour
         {
             StickIntoWall(other);
         }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            StickIntoWall(other);
+        }
     }
 
     void StickIntoWall(Collision other)
     {
-        Debug.LogError(other.contacts.Length);
         Vector3 pointOfImpact = other.contacts[0].point;
         bulletRB.isKinematic = true;
         bulletRB.velocity = Vector3.zero;

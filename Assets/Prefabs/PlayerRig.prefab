@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 20637347849470508}
   - component: {fileID: 124426840252156308}
   - component: {fileID: 81247571470868756}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 114854881353092788}
   - component: {fileID: 114073556702138282}
   - component: {fileID: 143363827485283596}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4167500319301854}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlayerRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4122325892857812}
   - component: {fileID: 114937372452562502}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CameraTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4437211033415978}
   - component: {fileID: 96425469729437512}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,7 +369,10 @@ MonoBehaviour:
   playerController: {fileID: 143363827485283596}
   playerTrans: {fileID: 4247915129644688}
   movementSpeed: 30
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 1527690576042670, guid: abb2a618bd3d0e44c867ac59e32d020d,
+    type: 2}
+  _jumpPower: 15
+  _jumpGravity: 40
 --- !u!114 &114854881353092788
 MonoBehaviour:
   m_ObjectHideFlags: 1
