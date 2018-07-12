@@ -32,16 +32,12 @@ public class PlayerControls : MonoBehaviour
         Vector3 movementDirection = (new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))).normalized;
         playerController.SimpleMove(movementDirection * movementSpeed);// * Time.deltaTime);
         Vector3 fireDirection = (new Vector3(Input.GetAxis("HorizontalFire"), 0, Input.GetAxis("VerticalFire"))).normalized;
-<<<<<<< HEAD
         if (fireDirection.sqrMagnitude > .01f && Time.time > _nextFireTime)
         {
             // FIRE!!!
             Instantiate(bulletPrefab, transform.position + fireDirection, Quaternion.LookRotation(fireDirection, Vector3.up));
             _nextFireTime = Time.time + .3f;
         }
-=======
 	    NcGO.NetPosition = transform.position;
-
->>>>>>> cc25f8eb911cb203c725c52eeaa322288c2325fd
     }
 }
