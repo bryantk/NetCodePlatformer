@@ -38,6 +38,6 @@ public class PlayerControls : MonoBehaviour
             Instantiate(bulletPrefab, transform.position + fireDirection, Quaternion.LookRotation(fireDirection, Vector3.up));
             _nextFireTime = Time.time + .3f;
         }
-	    NcGO.NetPosition = transform.position;
+	    //NcGO.NetPosition = transform.position;
     }
 }

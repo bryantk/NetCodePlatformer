@@ -22,6 +22,6 @@ public class CameraManager : MonoBehaviour
 		transform.position = Vector3.Lerp(transform.position, FollowTarget.position, FollowSpeed);
 
 		dif = (transform.position - FollowTarget.position).magnitude * 6;
-		CameraRec.fieldOfView = 45 + dif;
+		CameraRec.fieldOfView = Mathf.Min(45f + dif, 70f);
 	}
 }
