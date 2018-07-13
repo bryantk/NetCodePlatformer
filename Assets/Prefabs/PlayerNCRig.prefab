@@ -369,9 +369,11 @@ MonoBehaviour:
   playerController: {fileID: 143358582024052240}
   playerTrans: {fileID: 4616183877829482}
   movementSpeed: 30
-  CamerTransform: {fileID: 4401990533931048}
-  MasterCamera: {fileID: 20068661998447036}
+  Camera: {fileID: 0}
   bulletPrefab: {fileID: 0}
+  Cooldown: 0.5
+  _jumpPower: 15
+  _jumpGravity: 20
 --- !u!114 &114324400956849878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -385,7 +387,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 4
   m_SendInterval: 0.1
-  m_SyncRotationAxis: 7
+  m_SyncRotationAxis: 0
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
   m_MovementTheshold: 0.001

@@ -27,7 +27,7 @@ public class PlayerControl : NetworkBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		if (!localPlayerAuthority)
+		if (!isLocalPlayer)
 		{
 			Destroy(this);
 			return;
@@ -60,12 +60,20 @@ public class PlayerControl : NetworkBehaviour
 		if (fireDirection.sqrMagnitude > .01f && Time.time > _nextFireTime)
 		{
 			// FIRE!!!
-			Instantiate(bulletPrefab, transform.position + fireDirection + ((Vector3.up * .15f) * Random.Range(-1f, 1f)), Quaternion.LookRotation(fireDirection, Vector3.up));
+			//Network.Instantiate(bulletPrefab, transform.position + fireDirection + ((Vector3.up * .15f) * Random.Range(-1f, 1f)), Quaternion.LookRotation(fireDirection, Vector3.up), playerControllerId);
+			CmdFire(fireDirection);
 			_nextFireTime = Time.time + Cooldown;
 		}
 
 		//transform.DOMove(FollowTarget.position, FollowSpeed).SetSpeedBased(true);
 		CamerTransform.position = Vector3.Lerp(CamerTransform.position, transform.position, 0.1f);
 
+	}
+
+	[Command]
+	void CmdFire(Vector3 fireDirection)
+	{
+		var go = Instantiate(bulletPrefab, transform.position + fireDirection + ((Vector3.up * .15f) * Random.Range(-1f, 1f)), Quaternion.LookRotation(fireDirection, Vector3.up));
+		NetworkServer.Spawn(go);
 	}
 }
