@@ -56,9 +56,4 @@ public class PlayerControls : MonoBehaviour
         }
 	    //NcGO.NetPosition = transform.position;
     }
-
-    void FixedUpdate()
-    {
-        // Set isGrounded
-    }
 }
