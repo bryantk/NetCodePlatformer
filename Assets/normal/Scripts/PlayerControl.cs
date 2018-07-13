@@ -29,7 +29,7 @@ public class PlayerControl : NetworkBehaviour
 	{
 		if (!isLocalPlayer)
 		{
-			Destroy(this);
+			//Destroy(this);
 			return;
 		}
 
@@ -42,7 +42,13 @@ public class PlayerControl : NetworkBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if (playerController.isGrounded && Input.GetKeyDown(KeyCode.Space))
+        if (!isLocalPlayer)
+        {
+            //Destroy(this);
+            return;
+        }
+
+        if (playerController.isGrounded && Input.GetKeyDown(KeyCode.Space))
 		{
 			_currentJumpFactor = _jumpPower;
 		}
