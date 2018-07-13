@@ -258,7 +258,10 @@ MonoBehaviour:
   playerTrans: {fileID: 4679635111633128}
   movementSpeed: 30
   Camera: {fileID: 1260208100002422, guid: 6c55b1e3dbd736246b049c68f7b14b0d, type: 2}
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 1527690576042670, guid: abb2a618bd3d0e44c867ac59e32d020d,
+    type: 2}
+  _jumpPower: 15
+  _jumpGravity: 20
 --- !u!114 &114801613163247644
 MonoBehaviour:
   m_ObjectHideFlags: 1
